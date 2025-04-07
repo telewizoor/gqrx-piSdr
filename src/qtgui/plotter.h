@@ -199,6 +199,7 @@ protected:
     void mousePressEvent(QMouseEvent * event) override;
     void mouseReleaseEvent(QMouseEvent * event) override;
     void wheelEvent( QWheelEvent * event ) override;
+    void viewportEvent( QEvent * event );
 
 private:
     enum eCapturetype {
@@ -236,6 +237,8 @@ private:
 
     static void calcDivSize (qint64 low, qint64 high, int divswanted, qint64 &adjlow, qint64 &step, int& divs);
     void        showToolTip(QMouseEvent* event, QString toolTipText);
+
+    bool        m_AxisMoved;
 
     bool        m_MaxHoldActive;
     bool        m_MaxHoldValid;
@@ -360,6 +363,8 @@ private:
     quint64     tlast_peaks_ms;     // last time peaks were updated
     quint64     wf_span;            // waterfall span in milliseconds (0 = auto)
     int         fft_rate;           // expected FFT rate (needed when WF span is auto)
+
+    qreal totalScaleFactor = 1;
 };
 
 #endif // PLOTTER_H

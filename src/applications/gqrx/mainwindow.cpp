@@ -357,7 +357,7 @@ MainWindow::MainWindow(const QString& cfgfile, bool edit_conf, QWidget *parent) 
     connect(rds_timer, SIGNAL(timeout()), this, SLOT(rdsTimeout()));
 
     // enable frequency tooltips on FFT plot
-    ui->plotter->setTooltipsEnabled(true);
+    //ui->plotter->setTooltipsEnabled(true);
 
     // Create list of input devices. This must be done before the configuration is
     // restored because device probing might change the device configuration
@@ -397,6 +397,12 @@ MainWindow::MainWindow(const QString& cfgfile, bool edit_conf, QWidget *parent) 
     }
 
     qsvg_dummy = new QSvgWidget();
+
+    /* Start with fullscreen */
+    //on_actionFullScreen_triggered(true);
+
+    /* Start DSP on startup */
+    on_actionDSP_triggered(true);
 }
 
 MainWindow::~MainWindow()
@@ -988,6 +994,58 @@ void MainWindow::on_clearMarkerButtonB_clicked()
     setMarkerB(MARKER_OFF);
 }
 
+void MainWindow::on_centerButton_clicked()
+{
+    ui->plotter->moveToDemodFreq();
+}
+
+void MainWindow::on_fullscreenButton_clicked()
+{
+    on_actionFullScreen_triggered(!m_FullScreenState);
+}
+
+/** band choose */
+void MainWindow::on_cmbBands_currentIndexChanged(int index)
+{
+    int newFreq = 14250000;
+    switch(index) {
+        // 80m
+        case 0:
+            newFreq = 3710000;
+        break;
+        // 40m
+        case 1:
+            newFreq = 7100000;
+        break;
+        // 30m
+        case 2:
+            newFreq = 10120000;
+        break;
+        // 20m
+        case 3:
+            newFreq = 14250000;
+        break;
+        // 17m
+        case 4:
+            newFreq = 18150000;
+        break;
+        // 10m
+        case 5:
+            newFreq = 28330000;
+        break;
+        // 6m
+        case 6:
+            newFreq = 51000000;
+        break;
+        default:
+        newFreq = 14250000;
+        break;
+    }
+
+    on_plotter_newDemodFreq(newFreq, 0);
+    on_centerButton_clicked();
+}
+
 /**
  * @brief Set new LNB LO frequency.
  * @param freq_mhz The new frequency in MHz.
@@ -1450,7 +1508,7 @@ void MainWindow::setNoiseBlanker(int nbid, bool on, float threshold)
 void MainWindow::setSqlLevel(double level_db)
 {
     rx->set_sql_level(level_db);
-    ui->sMeter->setSqlLevel(level_db);
+    //ui->sMeter->setSqlLevel(level_db);
 }
 
 /**
@@ -1473,7 +1531,7 @@ void MainWindow::meterTimeout()
     float level;
 
     level = rx->get_signal_pwr();
-    ui->sMeter->setLevel(level);
+    //ui->sMeter->setLevel(level);
     remote->setSignalLevel(level);
 }
 
@@ -2138,6 +2196,8 @@ void MainWindow::on_actionFullScreen_triggered(bool checked)
         ui->statusBar->show();
         showNormal();
     }
+
+    m_FullScreenState = checked;
 }
 
 /** Remote control button (or menu item) toggled. */
