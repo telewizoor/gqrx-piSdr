@@ -2709,10 +2709,13 @@ void CPlotter::calcDivSize (qint64 low, qint64 high, int divswanted, qint64 &adj
 
 void CPlotter::showToolTip(QMouseEvent* event, QString toolTipText)
 {
+    int w = m_OverlayPixmap.width();
+    int h = m_OverlayPixmap.height() + m_WaterfallImage.height();
+    QPoint tipPos(10, h);
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QToolTip::showText(event->globalPos(), toolTipText, this);
+    QToolTip::showText(tipPos, toolTipText, this);
 #else
-    QToolTip::showText(event->globalPosition().toPoint(), toolTipText, this);
+    QToolTip::showText(tipPos, toolTipText, this);
 #endif
 }
 
