@@ -1015,7 +1015,7 @@ void MainWindow::on_cmbBands_currentIndexChanged(int index)
         break;
         // 40m
         case 1:
-            newFreq = 7100000;
+            newFreq = 7150000;
         break;
         // 30m
         case 2:
