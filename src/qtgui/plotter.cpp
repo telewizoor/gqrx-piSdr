@@ -228,13 +228,52 @@ void CPlotter::mouseMoveEvent(QMouseEvent* event)
                 setCursor(QCursor(Qt::PointingHandCursor));
                 m_CursorCaptured = TAG;
             }
-            else if (isPointCloseTo(px, m_YAxisWidth/2, m_YAxisWidth/2))
+            else if (isPointCloseTo(px, m_YAxisWidth/1.5, m_YAxisWidth/1.5))
             {
                 if (YAXIS != m_CursorCaptured)
                     setCursor(QCursor(Qt::SizeVerCursor));
                 m_CursorCaptured = YAXIS;
                 if (m_TooltipsEnabled)
-                    QToolTip::hideText();
+                {
+                    QString toolTipText;
+                    qint64 hoverFrequency = freqFromX(px);
+                    toolTipText = QString("%1 MHz")
+                                          .arg(hoverFrequency/1.e6, 0, 'f', 4);
+
+                    QFontMetricsF metrics(m_Font);
+                    qreal bandTopY = ((qreal)h) - metrics.height() - 2 * VER_MARGIN - m_BandPlanHeight;
+                    QList<BandInfo> hoverBands = BandPlan::Get().getBandsEncompassing(hoverFrequency);
+                    if(m_BandPlanEnabled && py > bandTopY && !hoverBands.empty())
+                    {
+                        for (auto & hoverBand : hoverBands)
+                            toolTipText.append("\n" + hoverBand.name);
+                    }
+                    showToolTip(event, toolTipText);
+                }
+            }
+            /* Zoom on the right side */
+            else if (isPointCloseTo(px, w - m_YAxisWidth/1, m_YAxisWidth/1))
+            {
+                if (ZOOMAXIS != m_CursorCaptured)
+                    setCursor(QCursor(Qt::SplitHCursor));
+                m_CursorCaptured = ZOOMAXIS;
+                if (m_TooltipsEnabled)
+                {
+                    QString toolTipText;
+                    qint64 hoverFrequency = freqFromX(px);
+                    toolTipText = QString("%1 MHz")
+                                          .arg(hoverFrequency/1.e6, 0, 'f', 4);
+
+                    QFontMetricsF metrics(m_Font);
+                    qreal bandTopY = ((qreal)h) - metrics.height() - 2 * VER_MARGIN - m_BandPlanHeight;
+                    QList<BandInfo> hoverBands = BandPlan::Get().getBandsEncompassing(hoverFrequency);
+                    if(m_BandPlanEnabled && py > bandTopY && !hoverBands.empty())
+                    {
+                        for (auto & hoverBand : hoverBands)
+                            toolTipText.append("\n" + hoverBand.name);
+                    }
+                    showToolTip(event, toolTipText);
+                }
             }
             else if (isPointCloseTo(py, m_XAxisYCenter * 0.95 + (m_WaterfallImage.height()), m_CursorCaptureDelta + (m_WaterfallImage.height())))
             {
@@ -242,7 +281,22 @@ void CPlotter::mouseMoveEvent(QMouseEvent* event)
                     setCursor(QCursor(Qt::OpenHandCursor));
                 m_CursorCaptured = XAXIS;
                 if (m_TooltipsEnabled)
-                    QToolTip::hideText();
+                {
+                    QString toolTipText;
+                    qint64 hoverFrequency = freqFromX(px);
+                    toolTipText = QString("%1 MHz")
+                                          .arg(hoverFrequency/1.e6, 0, 'f', 4);
+
+                    QFontMetricsF metrics(m_Font);
+                    qreal bandTopY = ((qreal)h) - metrics.height() - 2 * VER_MARGIN - m_BandPlanHeight;
+                    QList<BandInfo> hoverBands = BandPlan::Get().getBandsEncompassing(hoverFrequency);
+                    if(m_BandPlanEnabled && py > bandTopY && !hoverBands.empty())
+                    {
+                        for (auto & hoverBand : hoverBands)
+                            toolTipText.append("\n" + hoverBand.name);
+                    }
+                    showToolTip(event, toolTipText);
+                }
             }
             else if (isPointCloseTo(px, m_DemodFreqX, m_CursorCaptureDelta))
             {
@@ -375,6 +429,34 @@ void CPlotter::mouseMoveEvent(QMouseEvent* event)
 
                 updateOverlay();
             }
+        }
+    }
+    if (ZOOMAXIS == m_CursorCaptured)
+    {
+        if (event->buttons() & Qt::LeftButton)
+        {
+            setCursor(QCursor(Qt::ClosedHandCursor));
+            // move X scale up/down
+            float delta_py = m_Yzero - py;
+            float delta_zoom = delta_py;
+        
+            // delta is in eigths of a degree, 15 degrees is one step
+            double numSteps = delta_zoom / (8.0 * 15.0);
+            // zoom faster when Ctrl is held
+            double zoomBase = 0.7;
+
+            /* precent zooming at the first mouse move */
+            if(m_AxisMoved) {
+                zoomStepX(pow(zoomBase, numSteps), w/2);
+            }
+
+            // axis was moved
+            m_AxisMoved = true;
+
+            m_Yzero = py;
+
+            updateOverlay();
+
         }
     }
     else if (XAXIS == m_CursorCaptured)

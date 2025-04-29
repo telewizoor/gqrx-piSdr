@@ -458,6 +458,16 @@ alternate-background-color: rgb(220, 220, 220);</string>
              </item>
              <item>
               <property name="text">
+               <string>15m</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>12m</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
                <string>10m</string>
               </property>
              </item>

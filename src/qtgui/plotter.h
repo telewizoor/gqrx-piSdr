@@ -211,7 +211,8 @@ private:
         XAXIS,
         TAG,
         MARKER_A,
-        MARKER_B
+        MARKER_B,
+        ZOOMAXIS
     };
 
     void        drawOverlay();

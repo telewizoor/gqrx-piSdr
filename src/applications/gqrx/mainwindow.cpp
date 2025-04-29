@@ -357,7 +357,7 @@ MainWindow::MainWindow(const QString& cfgfile, bool edit_conf, QWidget *parent) 
     connect(rds_timer, SIGNAL(timeout()), this, SLOT(rdsTimeout()));
 
     // enable frequency tooltips on FFT plot
-    //ui->plotter->setTooltipsEnabled(true);
+    ui->plotter->setTooltipsEnabled(true);
 
     // Create list of input devices. This must be done before the configuration is
     // restored because device probing might change the device configuration
@@ -399,7 +399,7 @@ MainWindow::MainWindow(const QString& cfgfile, bool edit_conf, QWidget *parent) 
     qsvg_dummy = new QSvgWidget();
 
     /* Start with fullscreen */
-    //on_actionFullScreen_triggered(true);
+    on_actionFullScreen_triggered(true);
 
     /* Start DSP on startup */
     on_actionDSP_triggered(true);
@@ -1029,12 +1029,20 @@ void MainWindow::on_cmbBands_currentIndexChanged(int index)
         case 4:
             newFreq = 18150000;
         break;
-        // 10m
+        // 15m
         case 5:
+            newFreq = 21300000;
+        break;
+        // 12m
+        case 6:
+            newFreq = 24950000;
+        break;
+        // 10m
+        case 7:
             newFreq = 28330000;
         break;
         // 6m
-        case 6:
+        case 8:
             newFreq = 51000000;
         break;
         default:
