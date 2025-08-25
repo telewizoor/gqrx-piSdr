@@ -42,7 +42,7 @@ sudo apt-get install libqt5svg5-dev
 sudo apt-get install libpulse-dev
 sudo apt-get update
 sudo apt-get install -y cmake gnuradio-dev gr-osmosdr qt6-base-dev qt6-svg-dev qt6-wayland libasound2-dev libjack-jackd2-dev portaudio19-dev libpulse-dev
-git clone https://github.com/gqrx-sdr/gqrx.git
+git clone git@github.com:telewizoor/gqrx-piSdr.git
 cd gqrx
 mkdir build
 cd build
@@ -63,4 +63,5 @@ Hej, rozwiązałem to. To problem sterowników. Instalacja GQRX aktualizuje niek
 *Zainstaluj gr-osmosdr ze źródeł https://github.com/Nuand/gr-osmosdr (To był pakiet odpowiedzialny za aktualizację rtlsdr0)
 
 *Zainstaluj GQRX ze źródeł https://www.gqrx.dk/download/gqrx-sdr-for-the-raspberry-pi I to wszystko. (Przepraszam za mój nie bardzo dobry angielski).
+
 
